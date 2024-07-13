@@ -32,15 +32,19 @@ export class Category {
 
     // factory method for creating
     static create(props: CategoryCreateCommand): Category {//events
-        return new Category(props)
+        const category = new Category(props);
+        Category.validate(category);
+        return category;
     }
 
     changeName(name: string): void {
         this.name = name;
+        Category.validate(this);
     }
 
     changeDescription(description: string | null): void {
         this.description = description;
+        Category.validate(this);
     }
 
     activate(){

@@ -2,17 +2,22 @@ import { Uuid } from "../../../shared/domain/value-objects/uuid.vo"
 import { Category } from "../category.entity"
 
 describe('Category Unit Tests', () => {
-    describe('create command', () => {
+    let validateSpy: any;
+    beforeEach(() => {
+        validateSpy = jest.spyOn(Category, "validate")
+    })
+    describe('construtor', () => {
         // Triple AAA - Arrange, Act e Assert
-        test('should create a category value', () => {
+        test('should create a category value constructor', () => {
             let category = new Category({
                 name: 'Electronics'
             })
             expect(category.category_id).toBeInstanceOf(Uuid)
             expect(category.name).toBe('Electronics')
             expect(category.description).toBeNull()
-            expect(category.is_active).toBeTruthy()
+            expect(category.is_active).toBe(true)
             expect(category.created_at).toBeInstanceOf(Date)
+            
         })
         
         test('should create a category value with', () => {
@@ -29,23 +34,43 @@ describe('Category Unit Tests', () => {
             expect(category.description).toBe('Action and Adventure movies')
             expect(category.is_active).toBeFalsy()
             expect(category.created_at).toBe(created_at)
+            
         })
-    
+        
+    })
+
+    describe('create command', () => {
+
+        test('should create a category command', () => {
+            let category = Category.create({
+                name: "Movies"
+            })
+            expect(category.category_id).toBeInstanceOf(Uuid)
+            expect(category.name).toBe('Movies')
+            expect(category.description).toBeNull()
+            expect(category.is_active).toBe(true)
+            expect(category.created_at).toBeInstanceOf(Date)
+            expect(validateSpy).toHaveBeenCalledTimes(1);
+            
+        })
+
         test("should change name", () => {
-            const category = new Category({
+            const category = Category.create({
                 name: 'Books'
             })
             category.changeName('Magazines')
             expect(category.name).toBe('Magazines')
+            expect(validateSpy).toHaveBeenCalledTimes(2);
         })
 
         test('should change description', () => {
-            const category = new Category({
+            const category = Category.create({
                 name: 'Clothing',
                 description: 'Fashionable clothing items'
             })
             category.changeDescription('New styles and trends')
             expect(category.description).toBe('New styles and trends')
+            expect(validateSpy).toHaveBeenCalledTimes(2);
         })
 
         test('should activate category', () => {
@@ -65,7 +90,6 @@ describe('Category Unit Tests', () => {
             category.deactivate()
             expect(category.is_active).toBeFalsy()
         })
-        
     })
 
     describe('createCategory', () => {
@@ -78,6 +102,7 @@ describe('Category Unit Tests', () => {
             expect(category.description).toBeNull()
             expect(category.is_active).toBeTruthy()
             expect(category.created_at).toBeInstanceOf(Date)
+            expect(validateSpy).toHaveBeenCalledTimes(1);
         })
     })
 
