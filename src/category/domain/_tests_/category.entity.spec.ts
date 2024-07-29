@@ -124,3 +124,36 @@ describe('Category Unit Tests', () => {
     })
 
 })
+
+describe('Category validate', () => {
+    describe('create command', () => {
+        test('should an invalid category with name property', () => {
+            expect(() => Category.create({name: null})).containsErrorMessage({
+                name: [
+                    "name should not be empty",
+                    "name must be a string",
+                    "name must be shorter than or equal to 255 characters",
+                ]
+            })
+
+            expect(() => Category.create({name: ""})).containsErrorMessage({
+                name: [
+                    "name should not be empty",
+                ]
+            })
+
+            expect(() => Category.create({name: 5 as any})).containsErrorMessage({
+                name: [
+                    "name must be a string",
+                    "name must be shorter than or equal 255 characters"
+                ]
+            })
+
+            expect(() => Category.create({name: "t".repeat(256)})).containsErrorMessage({
+                name: [
+                    "name must be shorter than or equal to 255 characters",
+                ]
+            })
+        })
+    })
+})
